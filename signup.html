@@ -221,10 +221,10 @@
         // Check if already authenticated
         if (localStorage.getItem('authToken')) {
             const role = localStorage.getItem('userRole');
-            if (role === 'admin' || role === 'viewer') {
+            if (role === 'admin') {
                 window.location.href = '/admin.html';
             } else {
-                window.location.href = '/customer.html';
+                window.location.href = '/zad_automation_website.html';
             }
         }
     </script>

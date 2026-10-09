@@ -146,10 +146,10 @@
                     localStorage.setItem('userRole', data.user.role);
                     
                     // Redirect based on role
-                    if (data.user.role === 'admin' || data.user.role === 'viewer') {
+                    if (data.user.role === 'admin') {
                         window.location.href = '/admin.html';
                     } else {
-                        window.location.href = '/customer.html';
+                        window.location.href = '/zad_automation_website.html';
                     }
                 } else {
                     // Show error message
