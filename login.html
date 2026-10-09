@@ -87,7 +87,13 @@
                     <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-slate-600 text-orange-500 focus:ring-orange-500">
                     <span class="text-slate-400">تذكرني</span>
                 </label>
-                <a href="#" class="text-orange-500 hover:text-orange-400">نسيت كلمة المرور؟</a>
+                <a href="/forgot-password.html" class="text-orange-500 hover:text-orange-400">نسيت كلمة المرور؟</a>
+            </div>
+            
+            <!-- Signup link -->
+            <div class="mt-4 text-center">
+                <p class="text-sm text-slate-400">لا تملك حساباً؟</p>
+                <a href="/signup.html" class="text-orange-500 hover:text-orange-400 font-medium">انشئ حساباً</a>
             </div>
             
             <!-- Error Message -->
@@ -139,8 +145,12 @@
                     localStorage.setItem('authToken', data.token);
                     localStorage.setItem('userRole', data.user.role);
                     
-                    // Redirect to admin panel
-                    window.location.href = '/admin.html';
+                    // Redirect based on role
+                    if (data.user.role === 'admin' || data.user.role === 'viewer') {
+                        window.location.href = '/admin.html';
+                    } else {
+                        window.location.href = '/customer.html';
+                    }
                 } else {
                     // Show error message
                     errorMessage.textContent = data.error || 'فشل تسجيل الدخول';
@@ -173,9 +183,15 @@
         `;
         document.head.appendChild(style);
         
-        // Check if already authenticated
-        if (localStorage.getItem('authToken')) {
-            window.location.href = '/admin.html';
+        // Check if already authenticated and redirect based on role
+        const existingToken = localStorage.getItem('authToken');
+        const existingRole = localStorage.getItem('userRole');
+        if (existingToken && existingRole) {
+            if (existingRole === 'admin' || existingRole === 'viewer') {
+                window.location.href = '/admin.html';
+            } else {
+                window.location.href = '/customer.html';
+            }
         }
     </script>
 </body>

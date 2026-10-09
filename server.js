@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const sqlite3 = require('sqlite3').verbose();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -55,8 +56,21 @@ db.serialize(() => {
         username TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
         role TEXT NOT NULL DEFAULT 'viewer',
+        email TEXT,
+        phone TEXT,
         createdAt TEXT NOT NULL,
         lastLogin TEXT
+    )`);
+
+    // Create password reset tokens table
+    db.run(`CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        token TEXT NOT NULL,
+        expires_at TEXT NOT NULL,
+        used BOOLEAN DEFAULT 0,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
     )`);
 
     // Insert default admin user if not exists (password: admin123 hashed)
@@ -256,6 +270,193 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
     });
 });
 
+// API: User Signup (customer registration)
+app.post('/api/auth/signup', (req, res) => {
+    const { username, password, email, phone } = req.body;
+
+    if (!username || !password || !email) {
+        return res.status(400).json({ error: 'اسم المستخدم والبريد الإلكتروني مطلوبان' });
+    }
+
+    // Check if user already exists
+    db.get('SELECT * FROM users WHERE username = ? OR email = ?', [username, email], (err, existingUser) => {
+        if (err) {
+            return res.status(500).json({ error: 'حدث خطأ في الخادم' });
+        }
+
+        if (existingUser) {
+            return res.status(409).json({ error: 'اسم المستخدم أو البريد الإلكتروني مستخدم بالفعل' });
+        }
+
+        // Hash password
+        const saltRounds = 10;
+        bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
+            if (err) {
+                return res.status(500).json({ error: 'حدث خطأ في تشفير كلمة المرور' });
+            }
+
+            const createdAt = new Date().toISOString();
+
+            // Create new customer user
+            db.run(
+                `INSERT INTO users (username, password, role, email, phone, createdAt, lastLogin) VALUES (?, ?, 'customer', ?, ?, ?, NULL)`,
+                [username, hashedPassword, email, phone, createdAt],
+                function (err) {
+                    if (err) {
+                        console.error('Signup insert error:', err);
+                        return res.status(500).json({ error: 'فشل في إنشاء الحساب' });
+                    }
+
+                    res.status(201).json({
+                        message: 'تم إنشاء الحساب بنجاح',
+                        user: {
+                            id: this.lastID,
+                            username,
+                            email,
+                            phone,
+                            role: 'customer'
+                        }
+                    });
+                }
+            );
+        });
+    });
+});
+
+// API: Forgot password - send reset token via email
+app.post('/api/auth/forgot-password', (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: 'البريد الإلكتروني مطلوب' });
+    }
+
+    db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
+        if (err) {
+            return res.status(500).json({ error: 'حدث خطأ في الخادم' });
+        }
+
+        if (!user) {
+            // Don't reveal if email exists or not for security
+            return res.json({ message: 'إذا كان البريد الإلكتروني موجوداً، سيتم إرسال رابط إعادة التعيين' });
+        }
+
+        // Generate reset token
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + 24); // Token valid for 24 hours
+        const createdAt = new Date().toISOString();
+
+        // Store token in database
+        db.run(
+            `INSERT INTO password_reset_tokens (user_id, token, expires_at, created_at) VALUES (?, ?, ?, ?)`,
+            [user.id, resetToken, expiresAt, createdAt],
+            (err) => {
+                if (err) {
+                    return res.status(500).json({ error: 'حدث خطأ في إنشاء الرمز' });
+                }
+
+                // Send reset email
+                try {
+                    const mailOptions = {
+                        from: process.env.SENDER_EMAIL || 'no-reply@zad-automation.com',
+                        to: user.email,
+                        subject: 'إعادة تعيين كلمة المرور - Zad Automation',
+                        text: `لقد تم طلب إعادة تعيين كلمة المرور لحسابك.\n\nالرابط صالح لمدة 24 ساعة:\n${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password.html?token=${resetToken}\n\nإذا لم تقم بطلب إعادة التعيين، يمكنك تجاهل هذه الرسالة.\n\nفريق دعم Zad Automation`,
+                        html: `
+                            <h2>إعادة تعيين كلمة المرور</h2>
+                            <p>تم طلب إعادة تعيين كلمة المرور لحسابك.</p>
+                            <p><strong>الرابط صالح لمدة 24 ساعة.</strong></p>
+                            <p><a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password.html?token=${resetToken}" style="background: #f97316; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">إعادة تعيين كلمة المرور</a></p>
+                            <p>إذا لم تقم بطلب إعادة التعيين، يمكنك تجاهل هذه الرسالة.</p>
+                            <p>فريق دعم Zad Automation</p>
+                        `
+                    };
+
+                    if (emailTransporter) {
+                        emailTransporter.sendMail(mailOptions, (error) => {
+                            if (error) {
+                                console.error('Error sending reset email:', error);
+                                // Don't fail the request if email fails
+                            }
+                        });
+                    }
+                } catch (emailError) {
+                    console.error('Email setup error:', emailError);
+                }
+
+                res.json({ message: 'إذا كان البريد الإلكتروني موجوداً، سيتم إرسال رابط إعادة التعيين' });
+            }
+        );
+    });
+});
+
+// API: Reset password with token
+app.post('/api/auth/reset-password', (req, res) => {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+        return res.status(400).json({ error: 'رمز التعيين وكلمة المرور الجديدة مطلوبتان' });
+    }
+
+    if (newPassword.length < 6) {
+        return res.status(400).json({ error: 'يجب أن تكون كلمة المرور الجديدة على الأقل 6 حروف' });
+    }
+
+    // Find valid, unused token
+    db.get('SELECT * FROM password_reset_tokens WHERE token = ? AND used = 0 AND expires_at > ?', [token, new Date().toISOString()], (err, resetToken) => {
+        if (err) {
+            return res.status(500).json({ error: 'حدث خطأ في الخادم' });
+        }
+
+        if (!resetToken) {
+            return res.status(400).json({ error: 'رمز التعيين غير صالح أو منتهي الصلاحية' });
+        }
+
+        // Get user details
+        db.get('SELECT * FROM users WHERE id = ?', [resetToken.user_id], (err, user) => {
+            if (err) {
+                return res.status(500).json({ error: 'حدث خطأ في الخادم' });
+            }
+
+            if (!user) {
+                return res.status(404).json({ error: 'المستخدم غير موجود' });
+            }
+
+            // Hash new password
+            bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
+                if (err) {
+                    return res.status(500).json({ error: 'حدث خطأ في تشفير كلمة المرور' });
+                }
+
+                // Update user password
+                db.run(
+                    `UPDATE users SET password = ? WHERE id = ?`,
+                    [hashedPassword, user.id],
+                    (err) => {
+                        if (err) {
+                            return res.status(500).json({ error: 'حدث خطأ في حفظ كلمة المرور' });
+                        }
+
+                        // Mark token as used
+                        db.run(
+                            `UPDATE password_reset_tokens SET used = 1 WHERE id = ?`,
+                            [resetToken.id],
+                            (err) => {
+                                if (err) {
+                                    console.error('Error marking token as used:', err);
+                                }
+
+                                res.json({ message: 'تم إعادة تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة' });
+                            }
+                        );
+                    }
+                );
+            });
+        });
+    });
+});
+
 // Protected: All API routes below require authentication
 app.use(authenticateToken);
 
@@ -287,6 +488,23 @@ app.post('/api/requests', (req, res) => {
             });
         }
     );
+});
+
+// API: Get customer's own requests (protected)
+app.get('/api/requests/my', authenticateToken, (req, res) => {
+    const { phone } = req.user;
+
+    if (!phone) {
+        return res.status(400).json({ error: 'لا يمكن جلب الطلبات بدون رقم هاتف' });
+    }
+
+    db.all('SELECT * FROM requests WHERE phone = ? ORDER BY submittedAt DESC', [phone], (err, rows) => {
+        if (err) {
+            console.error('Error fetching own requests:', err);
+            return res.status(500).json({ error: 'Failed to fetch your requests' });
+        }
+        res.json(rows);
+    });
 });
 
 // API: Get all requests (admin side) - with role check
