@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zad Automation | Industrial Maintenance & 3D Mold Solutions</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#0a192f',
+                            slate: '#1e293b',
+                            dark: '#0f172a',
+                            orange: '#f97316',
+                            gold: '#eab308',
+                            cyan: '#06b6d4',
+                            accent: '#f97316',
+                            card: '#1e293b',
+                            border: '#334155'
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-orange-500 selection:text-white">
+
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="bg-slate-900 border-b border-slate-800 text-xs text-slate-300 py-2 px-4">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+
+            <div class="flex items-center gap-4">
+                <button id="langToggleBtn" onclick="toggleLanguage()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded border border-slate-700 transition-colors text-xs font-semibold">
+                    <i class="fa-solid fa-globe text-cyan-400"></i>
+                    <span id="langText">English</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVBAR -->
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 transition-all duration-300" id="mainHeader">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- LOGO -->
+<a href="#" class="flex items-center gap-3 group">
+    <div class="relative w-12 h-12 rounded-2xl bg-slate-900 border border-slate-700/60 p-0.5 shadow-xl group-hover:border-orange-500/80 transition-all duration-300">
+        <!-- Inner Glow Wrapper -->
+        <div class="w-full h-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 rounded-[14px] flex items-center justify-center relative overflow-hidden">
+            <div class="absolute -top-4 -right-4 w-10 h-10 bg-orange-500/20 rounded-full blur-md"></div>
+            <div class="absolute -bottom-4 -left-4 w-10 h-10 bg-cyan-500/20 rounded-full blur-md"></div>
+            
+            <!-- Icon Composition -->
+            <div class="relative flex items-center justify-center">
+                <i class="fa-solid fa-microchip text-xl text-orange-500 group-hover:scale-110 transition-transform"></i>
+                <i class="fa-solid fa-bolt text-[10px] text-cyan-400 absolute -top-1 -right-1.5 drop-shadow-[0_0_4px_#22d3ee]"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex flex-col">
+        <span class="text-xl font-black tracking-tight text-white font-inter">ZAD <span class="text-orange-500">GROUP</span></span>
+        <span class="text-[10px] text-slate-400 font-medium tracking-wider uppercase" data-i18n="tagline">Production Line & Electronics Maintenance</span>
+    </div>
+</a>
+
+                <!-- DESKTOP NAV -->
+                <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-300">
+                    <a href="#services" class="hover:text-orange-400 transition-colors py-2" data-i18n="nav-services">الخدمات والهندسة</a>
+                    <a href="#3d-calculator" class="hover:text-orange-400 transition-colors py-2" data-i18n="nav-3d">حاسبة القوالب 3D</a>
+                    <a href="#projects" class="hover:text-orange-400 transition-colors py-2" data-i18n="nav-projects">مشاريعنا</a>
+                    <a href="#contact" class="hover:text-orange-400 transition-colors py-2" data-i18n="nav-contact">التواصل والفرع</a>
+                </nav>
+
+                <!-- NAV ACTION -->
+                <div class="hidden md:flex items-center gap-3">
+                    <button onclick="openModal('maintenanceModal')" class="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 transition-all text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span data-i18n="btn-request-maint">طلب صيانة طارئة</span>
+                    </button>
+                </div>
+
+                <!-- MOBILE TOGGLE -->
+                <div class="flex lg:hidden items-center gap-2">
+                    <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="p-2.5 rounded-lg bg-slate-800 text-slate-200 hover:text-white focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl" id="menuIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MOBILE MENU DRAWER -->
+        <div id="mobileMenu" class="hidden lg:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-6 space-y-3">
+            <a href="#about" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-about">عن Zad Automation</a>
+            <a href="#services" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-services">الخدمات والهندسة</a>
+            <a href="#3d-calculator" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-3d">حاسبة القوالب 3D</a>
+            <a href="#projects" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-projects">مشاريعنا</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-contact">التواصل والفرع</a>
+            
+            <div class="pt-4 border-t border-slate-800 flex flex-col gap-2">
+                <button onclick="openModal('maintenanceModal'); toggleMobileMenu();" class="w-full bg-orange-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span data-i18n="btn-request-maint">طلب صيانة طارئة</span>
+                </button>
+                <button onclick="openModal('moldModal'); toggleMobileMenu();" class="w-full bg-slate-800 border border-slate-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cube text-cyan-400"></i>
+                    <span data-i18n="btn-request-3d">طلب تصميم قوالب 3D</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative min-h-[85vh] flex items-center justify-center py-20 px-4 overflow-hidden bg-transparent">
+
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-96 h-96 bg-orange-500 rounded-full blur-[128px]"></div>
+            <div class="absolute top-1/2 -left-40 w-96 h-96 bg-cyan-500 rounded-full blur-[128px]"></div>
+            <div class="w-full h-full bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:32px_32px]"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- HERO TEXT CONTENT -->
+            <div class="lg:col-span-7 space-y-8 text-center lg:text-start flex flex-col items-center lg:items-start justify-center reveal reveal-fade-right">
+                
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold tracking-wide mx-auto lg:mx-0">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span data-i18n="hero-badge">Zad Automation | شريك الأتمتة والصيانة المعتمد</span>
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.3] pt-2 pb-1 text-center lg:text-start">                    <span class="block pb-1" data-i18n="hero-title-1">حلول هندسية متكاملة لـ</span>
+                    <span class="gradient-text text-center lg:text-start" data-i18n="hero-title-2">صيانة خطوط الإنتاج وقوالب 3D</span>
+                </h1>
+
+                <p class="text-slate-300 text-base sm:text-lg max-w-2xl font-normal leading-relaxed mx-auto lg:mx-0 text-center lg:text-start" data-i18n="hero-desc">
+                    نضمن استمرارية خطوط إنتاجك بأعلى كفاءة تشغيلية. صيانة طارئة وكروت PLC إلكترونية، مع إمكانية تصميم وتصنيع القوالب ثلاثية الأبعاد بدقة صناعية متناهية.
+                </p>
+
+                <!-- HERO QUICK ACTIONS -->
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 w-full sm:w-auto">
+                    <button onclick="openModal('maintenanceModal')" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-orange-500 text-white font-bold text-base flex items-center justify-center gap-3 group glow-button">
+                        <i class="fa-solid fa-wrench group-hover:rotate-45 transition-transform"></i>
+                        <span data-i18n="btn-hero-maint">طلب صيانة خط إنتاج</span>
+                    </button>
+
+                    <button onclick="openModal('moldModal')" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-800 border border-slate-700 text-white font-bold text-base flex items-center justify-center gap-3 glow-button-cyan">
+                        <i class="fa-solid fa-cube text-cyan-400"></i>
+                        <span data-i18n="btn-hero-3d">إنتاج وقوالب 3D</span>
+                    </button>
+                </div>
+
+                <!-- STATS DISPLAY -->
+                <div class="pt-8 border-t border-slate-800/80 grid grid-cols-3 gap-4 max-w-lg mx-auto lg:mx-0 w-full">
+                    <div class="text-center lg:text-start">
+                        <div class="text-2xl sm:text-3xl font-black text-white font-inter">99.4%</div>
+                        <div class="text-xs text-slate-400 font-medium" data-i18n="stat-1">نسبة كفاءة التشغيل</div>
+                    </div>
+                    <div class="text-center lg:text-start border-r border-l border-slate-800 px-2">
+                        <div class="text-2xl sm:text-3xl font-black text-orange-400 font-inter">+450</div>
+                        <div class="text-xs text-slate-400 font-medium" data-i18n="stat-2">خط إنتاج تمت صيانته</div>
+                    </div>
+                    <div class="text-center lg:text-start">
+                        <div class="text-2xl sm:text-3xl font-black text-cyan-400 font-inter">&lt; 2hr</div>
+                        <div class="text-xs text-slate-400 font-medium" data-i18n="stat-3">زمن استجابة الطوارئ</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- DASHBOARD CARD -->
+            <div class="lg:col-span-5 reveal reveal-fade-left delay-200">
+                <div class="glass-card rounded-2xl p-6 relative border border-slate-700/60 shadow-2xl animate-float">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-700/60 mb-6">
+                        <div class="flex items-center gap-3">
+                            <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span class="text-sm font-bold text-slate-200" data-i18n="card-status-title">حالة نظام Zad Automation</span>
+                        </div>
+                        <span class="text-xs font-mono bg-slate-800 text-cyan-400 px-2.5 py-1 rounded">LIVE MONITORING</span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-orange-500/10 text-orange-400 flex items-center justify-center text-lg">
+                                    <i class="fa-solid fa-microchip"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white" data-i18n="card-plc">وحدات PLC & Inverters</h4>
+                                    <p class="text-xs text-slate-400" data-i18n="card-plc-desc">فحص كروت الإلكترونيات والتشخيص الذكي</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded font-bold" data-i18n="status-ready">جاهز 100%</span>
+                        </div>
+
+                        <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-lg">
+                                    <i class="fa-solid fa-cube"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white" data-i18n="card-3d">معمل قوالب الـ 3D</h4>
+                                    <p class="text-xs text-slate-400" data-i18n="card-3d-desc">طباعة SLA / SLS / FDM عالية الدقة</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded font-bold" data-i18n="status-active">نشط الآن</span>
+                        </div>
+
+                        <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-lg">
+                                    <i class="fa-solid fa-truck-fast"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white" data-i18n="card-response">فرق الدعم الميداني</h4>
+                                    <p class="text-xs text-slate-400" data-i18n="card-response-desc">تغطية كافة المناطق الصناعية</p>
+                                </div>
+                            </div>
+                            <span class="text-xs bg-amber-500/10 text-amber-400 px-2 py-1 rounded font-bold" data-i18n="status-standby">جاهزية 24/7</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-700/60">
+                        <button onclick="openModal('maintenanceModal')" class="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold text-sm hover:opacity-95 transition-opacity flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-headset"></i>
+                            <span data-i18n="card-cta">التواصل مع مهندس صيانة مباشرة</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section id="services" class="py-24 bg-slate-950/80 backdrop-blur-sm relative">
+        <!-- Decorative industrial background elements -->
+        <div class="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-72 sm:w-96 h-72 sm:h-96 bg-orange-500 rounded-full blur-[128px]"></div>
+            <div class="absolute top-1/2 -left-40 w-72 sm:w-96 h-72 sm:h-96 bg-cyan-500 rounded-full blur-[128px]"></div>
+            <div class="w-full h-full bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:32px_32px]"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4 reveal reveal-fade-up">
+                <span class="text-orange-500 text-xs font-black tracking-widest uppercase" data-i18n="services-subtitle">خدماتنا الهندسية والصناعية</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white" data-i18n="services-title">حلول متخصصة لصناعة بلا توقف</h2>
+                <p class="text-slate-400 text-sm sm:text-base" data-i18n="services-desc">
+                    نقدم خدمات صيانة وهندسة معتمدة تدعم استمرارية الإنتاج وتقليل هدر الطاقة والأعطال لشركة Zad Automation.
+                </p>
+            </div>
+
+            <!-- TAB FILTERS -->
+            <div class="flex flex-wrap justify-center gap-3 mb-12">
+                <button onclick="filterServices('all', event)" class="tab-btn active px-5 py-2.5 rounded-xl border border-slate-700 text-xs sm:text-sm font-bold transition-all" data-i18n="tab-all">جميع الخدمات</button>
+                <button onclick="filterServices('molds', event)" class="tab-btn px-5 py-2.5 rounded-xl border border-slate-700 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition-all" data-i18n="tab-molds">قوالب ثلاثية الأبعاد 3D</button>
+                <button onclick="filterServices('electronics', event)" class="tab-btn px-5 py-2.5 rounded-xl border border-slate-700 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition-all" data-i18n="tab-elec">إلكترونيات & PLC</button>
+                <button onclick="filterServices('contracts', event)" class="tab-btn px-5 py-2.5 rounded-xl border border-slate-700 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition-all" data-i18n="tab-contracts">عقود صيانة وقائية</button>
+            </div>
+
+            <!-- SERVICES GRID -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="servicesGrid">
+                
+                <div class="service-card glass-card glass-card-hover rounded-2xl p-8 flex flex-col justify-between reveal reveal-fade-up" data-category="electronics">
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl font-bold">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white" data-i18n="s3-title">صيانة و تطوير الانظمه الإلكترونية & PLC</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed" data-i18n="s3-desc">
+                            إصلاح كروت التحكم الصناعية، أجهزة الإنفرتر Inverters، وشاشات HMI اللمسية لجميع الماركات العالمية (Siemens, ABB, Schneider).
+                        </p>
+                        <ul class="text-xs text-slate-300 space-y-2 pt-2">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-400"></i> <span data-i18n="s3-f1"> اصلاح و تطوير انظمة PLC</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-400"></i> <span data-i18n="s3-f2">إصلاح أعطال أجهزة Variable Frequency Drive</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-400"></i> <span data-i18n="s3-f3">صيانة و تطوير الحساسات والاجهزه الالكترونية</span></li>
+                        </ul>
+                    </div>
+                    <div class="pt-6 mt-6 border-t border-slate-800">
+                        <button onclick="openModal('maintenanceModal')" class="text-amber-400 hover:text-amber-300 text-xs font-bold flex items-center gap-2">
+                            <span data-i18n="btn-order-now">طلب الخدمة الآن</span>
+                            <i class="fa-solid fa-arrow-left text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="service-card glass-card glass-card-hover rounded-2xl p-8 flex flex-col justify-between reveal reveal-fade-up delay-100" data-category="molds">
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-2xl font-bold">
+                            <i class="fa-solid fa-cube"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white" data-i18n="s2-title">إنتاج وتصنيع قوالب 3D</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed" data-i18n="s2-desc">
+                            نمذجة هندسية عكسية (Reverse Engineering) وطباعة القوالب ثلاثية الأبعاد ببدائل صناعية مقواة تتحمل الضغط والحرارة.
+                        </p>
+                        <ul class="text-xs text-slate-300 space-y-2 pt-2">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"></i> <span data-i18n="s2-f1">قوالب الحقن والنفخ البلاستيكي</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"></i> <span data-i18n="s2-f2">طباعة خامات PETG, ABS, Resin المقواة</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyan-400"></i> <span data-i18n="s2-f3">إنتاج نماذج أولية سريعة Prototype</span></li>
+                        </ul>
+                    </div>
+                    <div class="pt-6 mt-6 border-t border-slate-800">
+                        <button onclick="openModal('moldModal')" class="text-cyan-400 hover:text-cyan-300 text-xs font-bold flex items-center gap-2">
+                            <span data-i18n="btn-order-now">طلب الخدمة الآن</span>
+                            <i class="fa-solid fa-arrow-left text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+
+                <div class="service-card glass-card glass-card-hover rounded-2xl p-8 flex flex-col justify-between reveal reveal-fade-up delay-200" data-category="contracts">
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl font-bold">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white" data-i18n="s4-title">عقود الصيانة الوقائية السنوية</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed" data-i18n="s4-desc">
+                            عقود دورية مخصصة للمصانع والمنشآت تضمن الزيارات المنتظمة وتوفير قطع الغيار وتفادي التوقفات المفاجئة.
+                        </p>
+                        <ul class="text-xs text-slate-300 space-y-2 pt-2">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <span data-i18n="s4-f1">زيارات دورية شهرية أو أسبوعية</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <span data-i18n="s4-f2">أولوية الاستجابة للبلاغات الطارئة</span></li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> <span data-i18n="s4-f3">تقارير فنية قياسية شاملة</span></li>
+                        </ul>
+                    </div>
+                    <div class="pt-6 mt-6 border-t border-slate-800">
+                        <button onclick="openModal('maintenanceModal')" class="text-emerald-400 hover:text-emerald-300 text-xs font-bold flex items-center gap-2">
+                            <span data-i18n="btn-order-now">طلب الخدمة الآن</span>
+                            <i class="fa-solid fa-arrow-left text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CALCULATOR SECTION -->
+    <section id="3d-calculator" class="py-20 bg-slate-900/80 backdrop-blur-sm border-y border-slate-800 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-5 space-y-6 reveal reveal-fade-right">
+                    <span class="text-cyan-400 text-xs font-black tracking-widest uppercase" data-i18n="calc-subtitle">أداة التقدير التفاعلية</span>
+                    <h2 class="text-3xl font-extrabold text-white" data-i18n="calc-title">احسب مواصفات ومتطلبات قالب الـ 3D الخاص بك</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed" data-i18n="calc-desc">
+                        قم بتحديد نوع المادة والتسامح المطلوب وأبعاد الجزء للتطوير الأولي، للحصول على تقدير فني فوري واستجابة هندسية مباشرة من فريق Zad Automation.
+                    </p>
+                    
+                    <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
+                        <div class="flex items-center gap-3 text-amber-400 text-sm font-bold">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span data-i18n="calc-guarantee">ضمان دقة قياسات ودقة تصنيع عالية</span>
+                        </div>
+                        <p class="text-xs text-slate-400" data-i18n="calc-guarantee-desc">
+                            يتم مراجعة كافة الملفات بتقنيات CAD/CAM بواسطة مهندسين ميكانيكيين قبل البدء في الطباعة والصب.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 reveal reveal-fade-left delay-150">
+                    <div class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-700/80">
+                        <form id="calcForm" onsubmit="calculateMold(event)" class="space-y-6">
+                            
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-2" data-i18n="calc-mat-label">نوع الخامة / المادة</label>
+                                    <select id="calcMaterial" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none">
+                                        <option value="PETG Industrial">PETG Industrial (مقاوم للحرارة والصدمات)</option>
+                                        <option value="ABS High Tech">ABS High Tech (صلابة ميكانيكية عالية)</option>
+                                        <option value="Resin High Precision">Resin SLA (دقة تفاصيل متناهية)</option>
+                                        <option value="Carbon Fiber Nylon">Nylon Carbon Fiber (بديل ألومنيوم قسوة)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-2" data-i18n="calc-precision-label">دقة الطباعة (Layer Height)</label>
+                                    <select id="calcPrecision" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none">
+                                        <option value="Standard (0.2mm)">سريع للنماذج - Standard (0.2mm)</option>
+                                        <option value="High (0.1mm)">قياسي دقيق - High (0.1mm)</option>
+                                        <option value="Ultra (0.05mm)">فائق الدقة - Ultra (0.05mm)</option>
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-2" data-i18n="calc-dim-x">الطول (سم)</label>
+                                    <input type="number" id="dimX" value="15" min="1" max="100" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-2" data-i18n="calc-dim-y">العرض (سم)</label>
+                                    <input type="number" id="dimY" value="10" min="1" max="100" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-2" data-i18n="calc-dim-z">الارتفاع (سم)</label>
+                                    <input type="number" id="dimZ" value="8" min="1" max="100" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-2" data-i18n="calc-qty">الكمية المطلوبة (قطع)</label>
+                                <input type="number" id="calcQty" value="1" min="1" max="500" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:border-cyan-400 focus:outline-none">
+                            </div>
+
+                            <button type="submit" class="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black text-sm transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-calculator"></i>
+                                <span data-i18n="calc-btn">حساب وحفظ المواصفات للطلب</span>
+                            </button>
+                        </form>
+
+                        <div id="calcResult" class="hidden mt-6 p-4 rounded-xl bg-cyan-950/40 border border-cyan-500/30 space-y-3">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-slate-300" data-i18n="calc-estimated-time">زمن التنفيذ المقدر:</span>
+                                <span class="text-cyan-300 font-bold font-mono" id="estTime">24 - 48 ساعة</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-slate-300" data-i18n="calc-material-vol">حجم المادة المقدر:</span>
+                                <span class="text-cyan-300 font-bold font-mono" id="estVol">1,200 cm³</span>
+                            </div>
+                            <div class="pt-2 border-t border-cyan-800/40">
+                                <button onclick="openMoldModalWithCalc()" class="w-full py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                    <span data-i18n="calc-submit-request">متابعة إرسال هذا الطلب لفريق المبيعات</span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER SECTION -->
+    <footer id="contact" class="bg-slate-950 text-slate-400 border-t border-slate-800 pt-16 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <div class="space-y-4">
+                    <a href="#" class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center text-white shadow-lg">
+                            <i class="fa-solid fa-gears text-xl"></i>
+                        </div>
+                        <span class="text-xl font-black text-white font-inter">Zad <span class="text-orange-500">Automation</span></span>
+                    </a>
+                    <p class="text-xs leading-relaxed text-slate-400" data-i18n="footer-about">
+                        المؤسسة المتخصصة في صيانة خطوط الإنتاج والحلول البرمجية والإلكترونية وقوالب الطباعة ثلاثية الأبعاد للمصانع والشركات الصناعية.
+                    </p>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider" data-i18n="footer-links-title">خدمات سريعة</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#services" class="hover:text-orange-400 transition-colors" data-i18n="s2-title">إنتاج قوالب ثلاثية الأبعاد 3D</a></li>
+                        <li><a href="#services" class="hover:text-orange-400 transition-colors" data-i18n="s3-title">صيانة كروت PLC & Inverters</a></li>
+                        <li><a href="#services" class="hover:text-orange-400 transition-colors" data-i18n="s4-title">عقود الصيانة الوقائية</a></li>
+                    </ul>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider" data-i18n="footer-contact-title">معلومات التواصل</h4>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex items-start gap-2">
+                            <i class="fa-solid fa-location-dot text-orange-500 mt-0.5"></i>
+                            <span data-i18n="footer-address">المنطقة الصناعية - مدينة 6 أكتوبر / العاشر من رمضان</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-phone text-orange-500"></i>
+                            <span dir="ltr">+20 100 000 0000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider" data-i18n="footer-emergency-title">طوارئ الأعطال</h4>
+                    <p class="text-xs text-slate-400" data-i18n="footer-emergency-desc">فريق الدعم الفني جاهز للاستجابة الميدانية السريعة.</p>
+                    <button onclick="openModal('maintenanceModal')" class="w-full py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span data-i18n="btn-request-maint">إرسال بلاغ أعطال عاجل</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="pt-8 border-t border-slate-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+                <div>
+                    &copy; <span id="year">2026</span> <strong class="text-slate-300">Zad Automation</strong>. <span data-i18n="footer-rights">جميع الحقوق محفوظة.</span>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- MAINTENANCE MODAL -->
+    <div id="maintenanceModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-card max-w-xl w-full rounded-2xl p-6 sm:p-8 border border-slate-700 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('maintenanceModal')" class="absolute top-4 left-4 text-slate-400 hover:text-white p-2">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-wrench"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white" data-i18n="modal-maint-title">طلب صيانة خط إنتاج / إلكترونيات</h3>
+                    <p class="text-xs text-slate-400" data-i18n="modal-maint-desc">سيتم تحويل بلاغك فوراً للهندسة الميدانية في Zad Automation</p>
+                </div>
+            </div>
+
+            <form onsubmit="handleFormSubmit(event, 'صيانة')" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="form-company">اسم الشركة / المصنع</label>
+                    <input type="text" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                </div>
+
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="form-phone">رقم الهاتف / الواتساب</label>
+                        <input type="tel" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="form-type">نوع العطل</label>
+                        <select class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                            <option>عطل خط إنتاج كامل</option>
+                            <option>تلف كروت PLC أو Inverters</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span data-i18n="form-submit-maint">تأكيد وإرسال بلاغ الصيانة</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3D MOLD MODAL -->
+    <div id="moldModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-card max-w-xl w-full rounded-2xl p-6 sm:p-8 border border-slate-700 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('moldModal')" class="absolute top-4 left-4 text-slate-400 hover:text-white p-2">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-cube"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white" data-i18n="modal-3d-title">طلب إنتاج وتصنيع قوالب 3D</h3>
+                    <p class="text-xs text-slate-400" data-i18n="modal-3d-desc">تصميم ونمذجة هندسية متطورة في Zad Automation</p>
+                </div>
+            </div>
+
+            <form onsubmit="handleFormSubmit(event, 'قوالب 3D')" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="form-company">اسم الجهة / العميل</label>
+                    <input type="text" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="form-mold-notes">ملاحظات ومواصفات القالب</label>
+                    <textarea id="moldNotesInput" rows="3" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black text-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span data-i18n="form-submit-3d">إرسال طلب تصميم القالب</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="js/app.js"></script>
+</body>
+</html>

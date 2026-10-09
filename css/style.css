@@ -1,0 +1,208 @@
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden !important;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+body {
+    font-family: 'Cairo', 'Inter', sans-serif;
+    background-color: #060b13;
+    color: #f8fafc;
+}
+
+/* Fixed image wallpaper layer */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -10;
+    
+    /* Set your background image path */
+    background-image: linear-gradient(rgba(6, 11, 19, 0.86), rgba(6, 11, 19, 0.86)), url('../images/bg-wallpaper.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    
+    pointer-events: none;
+}
+
+/* Fixed Gradient Text Styling (Prevents Glyphs/Arabic Cropping) */
+.gradient-text {
+    background: linear-gradient(135deg, #f97316 0%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    padding-top: 0.15em;
+    padding-bottom: 0.2em;
+    line-height: 1.3;
+}
+
+/* Modular UI Components */
+.glass-card {
+    background: rgba(30, 41, 59, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-card-hover {
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+    transform: translateY(-8px) scale(1.01);
+    border-color: rgba(249, 115, 22, 0.35);
+    box-shadow: 0 20px 40px -15px rgba(249, 115, 22, 0.12);
+}
+
+.modal-active {
+    display: flex !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #f97316;
+}
+
+.tab-btn {
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background-color: #f97316;
+    color: #ffffff;
+    border-color: #f97316;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+}
+
+/* ==========================================================================
+   ADVANCED ANIMATIONS
+   ========================================================================== */
+
+/* Float animation for decorative card elements */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+}
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Float slower for other layered elements */
+@keyframes float-slow {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-8px) rotate(1deg);
+    }
+}
+.animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+}
+
+/* Spin slow animation for gear background icons */
+@keyframes spin-slow {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+.animate-spin-slow {
+    animation: spin-slow 25s linear infinite;
+}
+
+/* Dynamic Navbar Style after scrolling */
+header.scrolled {
+    background-color: rgba(10, 25, 47, 0.95);
+    backdrop-filter: blur(12px);
+    border-color: rgba(249, 115, 22, 0.15);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+    height: 4.5rem; /* Shrunk height */
+}
+
+header.scrolled .flex.items-center.justify-between.h-20 {
+    height: 4.5rem;
+}
+
+/* Scroll Reveal base animations */
+.reveal {
+    opacity: 0;
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+}
+
+.reveal-fade-up {
+    transform: translateY(40px);
+}
+
+.reveal-fade-in {
+    transform: scale(0.96);
+}
+
+.reveal-fade-left {
+    transform: translateX(-40px);
+}
+
+.reveal-fade-right {
+    transform: translateX(40px);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translate(0) scale(1);
+}
+
+/* Stagger transition delays */
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+
+/* Micro Interaction: Glow Hover Effect for buttons */
+.glow-button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glow-button:hover {
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+    transform: translateY(-2px);
+}
+.glow-button-cyan:hover {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Respect user preferences regarding animations */
+@media (prefers-reduced-motion: reduce) {
+    .reveal, .animate-float, .animate-float-slow, .animate-spin-slow {
+        transition: none !important;
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}

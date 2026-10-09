@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الدعم | Zad Automation</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#0a192f',
+                            slate: '#1e293b',
+                            dark: '#0f172a',
+                            orange: '#f97316',
+                            gold: '#eab308',
+                            cyan: '#06b6d4',
+                            accent: '#f97316',
+                            card: '#1e293b',
+                            border: '#334155'
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background-color: #060b13;
+            color: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .status-new { background: rgba(234, 179, 8, 0.15); color: #fbbf24; }
+        .status-confirmed { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
+        .status-progress { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
+        .status-done { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .status-closed { background: rgba(100, 116, 139, 0.15); color: #94a3b8; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="bg-slate-900 border-b border-slate-800 text-xs text-slate-300 py-2 px-4">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1 rounded border border-slate-700">
+                    <i class="fa-solid fa-shield-halved text-cyan-400"></i>
+                    <span>لوحة الدعم الفنية - Zad Support</span>
+                </span>
+                <span class="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1 rounded border border-slate-700">
+                    <i class="fa-solid fa-clock text-slate-400"></i>
+                    <span id="refreshTime">آخر تحديث: --:--</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="langToggleBtn" onclick="toggleLanguage()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded border border-slate-700 transition-colors text-xs font-semibold">
+                    <i class="fa-solid fa-globe text-cyan-400"></i>
+                    <span id="langText">English</span>
+                </button>
+                <a href="zad_automation_website.html" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded border border-slate-700 transition-colors text-xs font-semibold">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    <span id="backToSiteText">الموقع الرئيسي</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto space-y-6">
+
+            <!-- HEADER -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-black text-white" data-i18n="admin-title">لوحة متابعة طلبات الدعم</h1>
+                    <p class="text-sm text-slate-400" data-i18n="admin-subtitle">عرض وإدارة طلبات الصيانة وتصنيع القوالب الواردة من الموقع</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="refreshData()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold px-4 py-2 rounded-xl transition-colors text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span data-i18n="btn-refresh">تحديث</span>
+                    </button>
+                    <button onclick="clearAllData()" class="bg-red-600/20 hover:bg-red-600/30 border border-red-600/40 text-red-400 font-bold px-4 py-2 rounded-xl transition-colors text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span data-i18n="btn-clear">مسح كل البيانات</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STATS GRID -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="glass-card rounded-xl p-4 border border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-slate-400" data-i18n="stat-total">إجمالي الطلبات</p>
+                            <p class="text-2xl font-black text-white" id="statTotal">0</p>
+                        </div>
+                        <div class="w-11 h-11 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 text-xl">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-4 border border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-slate-400" data-i18n="stat-new">جديدة</p>
+                            <p class="text-2xl font-black text-amber-400" id="statNew">0</p>
+                        </div>
+                        <div class="w-11 h-11 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 text-xl">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-4 border border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-slate-400" data-i18n="stat-progress">قيد التنفيذ</p>
+                            <p class="text-2xl font-black text-cyan-400" id="statProgress">0</p>
+                        </div>
+                        <div class="w-11 h-11 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-xl">
+                            <i class="fa-solid fa-gears"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-4 border border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-slate-400" data-i18n="stat-done">منجزة</p>
+                            <p class="text-2xl font-black text-emerald-400" id="statDone">0</p>
+                        </div>
+                        <div class="w-11 h-11 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xl">
+                            <i class="fa-solid fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-4 border border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-slate-400" data-i18n="stat-closed">مغلقة</p>
+                            <p class="text-2xl font-black text-slate-400" id="statClosed">0</p>
+                        </div>
+                        <div class="w-11 h-11 rounded-xl bg-slate-700 flex items-center justify-center text-slate-400 text-xl">
+                            <i class="fa-solid fa-archive"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER BAR -->
+            <div class="glass-card rounded-xl p-4 border border-slate-700">
+                <div class="flex flex-col sm:flex-row gap-4 items-center">
+                    <div class="flex-1 w-full">
+                        <div class="relative">
+                            <i class="fa-solid fa-search absolute top-1/2 -translate-y-1/2 right-3 text-slate-500"></i>
+                            <input type="text" id="searchInput" oninput="renderRequests()" placeholder="بحث باسم الشركة، الهاتف، رقم الطلب..." class="w-full bg-slate-950 border border-slate-700 rounded-xl pr-10 pl-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                        </div>
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <select id="filterStatus" onchange="renderRequests()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                            <option value="all" data-i18n="filter-all">الكل</option>
+                            <option value="new" data-i18n="filter-new">جديدة</option>
+                            <option value="confirmed" data-i18n="filter-confirmed">تم التأكيد</option>
+                            <option value="progress" data-i18n="filter-progress">قيد التنفيذ</option>
+                            <option value="done" data-i18n="filter-done">منجزة</option>
+                            <option value="closed" data-i18n="filter-closed">مغلقة</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REQUESTS TABLE -->
+            <div class="glass-card rounded-xl border border-slate-700 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-950 border-b border-slate-800">
+                            <tr>
+                                <th class="text-right px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="th-id">رقم الطلب</th>
+                                <th class="text-right px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="th-service">الخدمة</th>
+                                <th class="text-right px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="th-company">الشركة / العميل</th>
+                                <th class="text-right px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="th-phone">الهاتف / واتساب</th>
+                                <th class="text-right px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="th-date">تاريخ الاستلام</th>
+                                <th class="text-right px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="th-status">الحالة</th>
+                                <th class="text-right px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="th-actions">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTableBody">
+                            <!-- rows rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="noRequests" class="hidden px-4 py-12 text-center">
+                    <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-3 text-slate-500 text-2xl">
+                        <i class="fa-solid fa-inbox"></i>
+                    </div>
+                    <p class="text-slate-400" data-i18n="no-requests">لا توجد طلبات لعرضها</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- REQUEST DETAIL MODAL -->
+    <div id="detailModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-card max-w-lg w-full rounded-2xl p-6 sm:p-8 border border-slate-700 relative shadow-2xl">
+            <button onclick="closeDetailModal()" class="absolute top-4 left-4 text-slate-400 hover:text-white p-2">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-xl font-bold" id="detailIcon">
+                    <i class="fa-solid fa-wrench"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white" data-i18n="detail-title">تفاصيل الطلب</h3>
+                    <p class="text-xs text-slate-400" id="detailId">REQ-XXXXXX</p>
+                </div>
+            </div>
+            <div class="space-y-4" id="detailContent">
+                <!-- filled by JS -->
+            </div>
+            <div class="pt-6 border-t border-slate-700 mt-6">
+                <label class="block text-xs font-bold text-slate-300 mb-2" data-i18n="lbl-status">تغيير الحالة</label>
+                <select id="detailStatus" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                    <option value="new" data-i18n="status-new">جديدة</option>
+                    <option value="confirmed" data-i18n="status-confirmed">تم التأكيد</option>
+                    <option value="progress" data-i18n="status-progress">قيد التنفيذ</option>
+                    <option value="done" data-i18n="status-done">منجزة</option>
+                    <option value="closed" data-i18n="status-closed">مغلقة</option>
+                </select>
+                <div class="flex gap-2 mt-4">
+                    <button onclick="saveStatus()" class="flex-1 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm transition-colors" data-i18n="btn-save-status">حفظ الحالة</button>
+                    <button onclick="deleteRequest()" class="flex-1 py-2.5 rounded-xl bg-red-600/20 hover:bg-red-600/30 border border-red-600/40 text-red-400 font-bold text-sm transition-colors" data-i18n="btn-delete">حذف</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'ar';
+        let requests = [];
+        let stats = { total: 0, new: 0, confirmed: 0, progress: 0, done: 0, closed: 0 };
+
+        const translations = {
+            ar: {
+                "admin-title": "لوحة متابعة طلبات الدعم",
+                "admin-subtitle": "عرض وإدارة طلبات الصيانة وتصنيع القوالب الواردة من الموقع",
+                "btn-refresh": "تحديث",
+                "btn-clear": "مسح كل البيانات",
+                "stat-total": "إجمالي الطلبات",
+                "stat-new": "جديدة",
+                "stat-progress": "قيد التنفيذ",
+                "stat-done": "منجزة",
+                "stat-closed": "مغلقة",
+                "filter-all": "الكل",
+                "filter-new": "جديدة",
+                "filter-confirmed": "تم التأكيد",
+                "filter-progress": "قيد التنفيذ",
+                "filter-done": "منجزة",
+                "filter-closed": "مغلقة",
+                "th-id": "رقم الطلب",
+                "th-service": "الخدمة",
+                "th-company": "الشركة / العميل",
+                "th-phone": "الهاتف / واتساب",
+                "th-date": "تاريخ الاستلام",
+                "th-status": "الحالة",
+                "th-actions": "الإجراءات",
+                "no-requests": "لا توجد طلبات لعرضها",
+                "detail-title": "تفاصيل الطلب",
+                "lbl-status": "تغيير الحالة",
+                "btn-save-status": "حفظ الحالة",
+                "btn-delete": "حذف",
+                "backToSiteText": "الموقع الرئيسي",
+                "detail-company": "الجهة / العميل",
+                "detail-phone": "الهاتف / الواتساب",
+                "detail-type": "نوع العطل",
+                "detail-notes": "الملاحظات",
+                "detail-submitted": "تاريخ الاستلام",
+                "detail-specs": "مواصفات القالب",
+                "detail-service": "نوع الخدمة",
+                "detail-actions": "إجراءات",
+                "status-new": "جديدة",
+                "status-confirmed": "تم التأكيد",
+                "status-progress": "قيد التنفيذ",
+                "status-done": "منجزة",
+                "status-closed": "مغلقة"
+            },
+            en: {
+                "admin-title": "Support Request Dashboard",
+                "admin-subtitle": "View and manage maintenance and 3D mold requests received from the site",
+                "btn-refresh": "Refresh",
+                "btn-clear": "Clear All Data",
+                "stat-total": "Total Requests",
+                "stat-new": "New",
+                "stat-progress": "In Progress",
+                "stat-done": "Completed",
+                "stat-closed": "Closed",
+                "filter-all": "All",
+                "filter-new": "New",
+                "filter-confirmed": "Confirmed",
+                "filter-progress": "In Progress",
+                "filter-done": "Completed",
+                "filter-closed": "Closed",
+                "th-id": "Request ID",
+                "th-service": "Service",
+                "th-company": "Company / Client",
+                "th-phone": "Phone / WhatsApp",
+                "th-date": "Received Date",
+                "th-status": "Status",
+                "th-actions": "Actions",
+                "no-requests": "No requests to display",
+                "detail-title": "Request Details",
+                "lbl-status": "Change Status",
+                "btn-save-status": "Save Status",
+                "btn-delete": "Delete",
+                "backToSiteText": "Main Site",
+                "detail-company": "Company / Client",
+                "detail-phone": "Phone / WhatsApp",
+                "detail-type": "Fault Type",
+                "detail-notes": "Notes",
+                "detail-submitted": "Submitted At",
+                "detail-specs": "Mold Specs",
+                "detail-service": "Service Type",
+                "detail-actions": "Actions",
+                "status-new": "New",
+                "status-confirmed": "Confirmed",
+                "status-progress": "In Progress",
+                "status-done": "Completed",
+                "status-closed": "Closed"
+            }
+        };
+
+        async function fetchAPI(url, options = {}) {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'API request failed');
+            }
+            return response.json();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            const langText = document.getElementById('langText');
+            if (langText) langText.innerText = currentLang === 'ar' ? 'English' : 'عربي';
+            const backText = document.getElementById('backToSiteText');
+            if (backText) backText.innerText = currentLang === 'ar' ? 'الموقع الرئيسي' : 'Main Site';
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    el.innerText = translations[currentLang][key];
+                }
+            });
+            renderRequests();
+        }
+
+        function formatDate(iso) {
+            const d = new Date(iso);
+            if (currentLang === 'ar') {
+                return d.toLocaleDateString('ar-EG', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+            }
+            return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function getStatusLabel(value) {
+            const key = 'status-' + value;
+            const t = translations[currentLang];
+            return t[key] || value;
+        }
+
+        function getStatusClass(value) {
+            return 'status-' + value;
+        }
+
+        async function refreshData() {
+            try {
+                const [requestsData, statsData] = await Promise.all([
+                    fetchAPI('/api/requests'),
+                    fetchAPI('/api/stats')
+                ]);
+                requests = requestsData;
+                stats = statsData;
+                renderStats();
+                renderRequests();
+                const now = new Date();
+                const refreshTime = document.getElementById('refreshTime');
+                if (refreshTime) {
+                    refreshTime.innerHTML = `<i class="fa-solid fa-clock text-slate-400"></i> ${currentLang === 'ar' ? 'آخر تحديث: ' : 'Last update: '}${now.toLocaleTimeString()}`;
+                }
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+            }
+        }
+
+        function renderStats() {
+            document.getElementById('statTotal').innerText = stats.total;
+            document.getElementById('statNew').innerText = stats.new;
+            document.getElementById('statProgress').innerText = stats.progress;
+            document.getElementById('statDone').innerText = stats.done;
+            document.getElementById('statClosed').innerText = stats.closed;
+        }
+
+        function renderRequests() {
+            const filterStatus = document.getElementById('filterStatus').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const tbody = document.getElementById('requestsTableBody');
+            const noRequests = document.getElementById('noRequests');
+
+            tbody.innerHTML = '';
+
+            let filtered = requests.filter(r => {
+                if (filterStatus !== 'all' && r.status !== filterStatus) return false;
+                const q = (r.id + r.company + r.phone + r.service + r.type + r.notes).toLowerCase();
+                return q.includes(search);
+            });
+
+            filtered.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+
+            if (filtered.length === 0) {
+                noRequests.classList.remove('hidden');
+            } else {
+                noRequests.classList.add('hidden');
+                filtered.forEach(r => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'border-b border-slate-800 hover:bg-slate-800/50 transition-colors';
+                    tr.innerHTML = `
+                        <td class="px-4 py-3">
+                            <span class="font-mono text-slate-300 font-bold">${r.id}</span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="${r.service === 'صيانة' || r.service.includes('صيانة') ? 'text-amber-400' : 'text-cyan-400'} font-bold text-xs">
+                                <i class="fa-solid ${r.service === 'صيانة' || r.service.includes('صيانة') ? 'fa-wrench' : 'fa-cube'}"></i>
+                                ${r.service}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="text-slate-200 font-medium">${r.company}</span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <a href="tel:${r.phone}" class="text-slate-300 hover:text-orange-400 text-xs">${r.phone}</a>
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="text-slate-400 text-xs">${formatDate(r.submittedAt)}</span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="status-${r.status} text-xs px-2.5 py-1 rounded font-bold">${getStatusLabel(r.status)}</span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center justify-end gap-2">
+                                <button onclick="viewDetail('${r.id}')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                                <button onclick="callPhone('${r.phone}')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-400 transition-colors flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-phone"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        let currentDetailId = null;
+
+        async function viewDetail(id) {
+            try {
+                const r = requests.find(x => x.id === id);
+                if (!r) return;
+                currentDetailId = id;
+                document.getElementById('detailId').innerText = id;
+                document.getElementById('detailStatus').value = r.status;
+
+                const isMaint = r.service === 'صيانة' || r.service.includes('صيانة');
+                const icon = isMaint ? 'fa-wrench' : 'fa-cube';
+                const color = isMaint ? 'orange' : 'cyan';
+                document.getElementById('detailIcon').innerHTML = `<i class="fa-solid ${icon}"></i>`;
+                document.getElementById('detailIcon').className = `w-10 h-10 rounded-xl bg-${color}-500/20 text-${color}-400 flex items-center justify-center text-xl font-bold`;
+
+                const phoneLink = `<a href="tel:${r.phone}" class="text-${color}-400 hover:underline text-sm">${r.phone}</a>`;
+
+                const specs = r.specs || r.notes;
+
+                let extraFields = '';
+                if (r.type) {
+                    extraFields += `
+                        <div class="flex justify-between text-sm py-2 border-b border-slate-800">
+                            <span class="text-slate-400 text-xs" data-i18n="detail-type">نوع العطل</span>
+                            <span class="text-slate-200 font-medium">${r.type}</span>
+                        </div>`;
+                }
+                if (r.notes && r.service !== 'قوالب 3D') {
+                    extraFields += `
+                        <div class="flex justify-between text-sm py-2 border-b border-slate-800">
+                            <span class="text-slate-400 text-xs" data-i18n="detail-notes">الملاحظات</span>
+                            <span class="text-slate-200 font-medium">${r.notes}</span>
+                        </div>`;
+                }
+                if (r.service === 'قوالب 3D' && specs) {
+                    extraFields += `
+                        <div class="flex justify-between text-sm py-2 border-b border-slate-800">
+                            <span class="text-slate-400 text-xs" data-i18n="detail-specs">مواصفات القالب</span>
+                            <span class="text-slate-200 font-medium text-xs">${specs}</span>
+                        </div>`;
+                }
+
+                document.getElementById('detailContent').innerHTML = `
+                    <div class="flex justify-between text-sm py-2 border-b border-slate-800">
+                        <span class="text-slate-400 text-xs" data-i18n="detail-service">نوع الخدمة</span>
+                        <span class="text-slate-200 font-bold">${r.service}</span>
+                    </div>
+                    <div class="flex justify-between text-sm py-2 border-b border-slate-800">
+                        <span class="text-slate-400 text-xs" data-i18n="detail-company">الجهة / العميل</span>
+                        <span class="text-slate-200 font-medium">${r.company}</span>
+                    </div>
+                    <div class="flex justify-between text-sm py-2 border-b border-slate-800">
+                        <span class="text-slate-400 text-xs" data-i18n="detail-phone">الهاتف / الواتساب</span>
+                        ${phoneLink}
+                    </div>
+                    <div class="flex justify-between text-sm py-2 border-b border-slate-800">
+                        <span class="text-slate-400 text-xs" data-i18n="detail-submitted">تاريخ الاستلام</span>
+                        <span class="text-slate-200 font-medium">${formatDate(r.submittedAt)}</span>
+                    </div>
+                    ${extraFields}
+                `;
+
+                document.getElementById('detailModal').classList.remove('hidden');
+                document.getElementById('detailModal').classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            } catch (error) {
+                console.error('Error viewing detail:', error);
+            }
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+            document.getElementById('detailModal').classList.remove('flex');
+            document.body.style.overflow = 'auto';
+            currentDetailId = null;
+        }
+
+        async function saveStatus() {
+            if (!currentDetailId) return;
+            const newStatus = document.getElementById('detailStatus').value;
+            try {
+                await fetchAPI(`/api/requests/${currentDetailId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                await refreshData();
+                closeDetailModal();
+            } catch (error) {
+                console.error('Error saving status:', error);
+                alert(currentLang === 'ar' ? 'حدث خطأ في حفظ الحالة' : 'Error saving status');
+            }
+        }
+
+        async function deleteRequest() {
+            if (!currentDetailId) return;
+            const msg = currentLang === 'ar'
+                ? 'هل أنت متأكد من حذف هذا الطلب؟'
+                : 'Are you sure you want to delete this request?';
+            if (!confirm(msg)) return;
+            try {
+                await fetchAPI(`/api/requests/${currentDetailId}`, { method: 'DELETE' });
+                await refreshData();
+                closeDetailModal();
+            } catch (error) {
+                console.error('Error deleting request:', error);
+                alert(currentLang === 'ar' ? 'حدث خطأ في حذف الطلب' : 'Error deleting request');
+            }
+        }
+
+        async function clearAllData() {
+            const msg = currentLang === 'ar'
+                ? 'سيتم حذف جميع الطلبات المخزنة. هل أنت متأكد؟'
+                : 'All stored requests will be deleted. Are you sure?';
+            if (!confirm(msg)) return;
+            try {
+                // Delete all requests one by one (since there's no bulk delete API)
+                for (const req of requests) {
+                    await fetchAPI(`/api/requests/${req.id}`, { method: 'DELETE' });
+                }
+                await refreshData();
+            } catch (error) {
+                console.error('Error clearing data:', error);
+                alert(currentLang === 'ar' ? 'حدث خطأ في مسح البيانات' : 'Error clearing data');
+            }
+        }
+
+        function callPhone(phone) {
+            window.location.href = 'tel:' + phone;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshData();
+            // Periodic refresh every 30 seconds
+            setInterval(refreshData, 30000);
+        });
+
+        document.getElementById('detailModal').addEventListener('click', (e) => {
+            if (e.target.id === 'detailModal') closeDetailModal();
+        });
+    </script>
+</body>
+</html>
