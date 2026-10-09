@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zad Automation | Admin Login</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#0a192f',
+                            slate: '#1e293b',
+                            dark: '#0f172a',
+                            orange: '#f97316',
+                            gold: '#eab308',
+                            cyan: '#06b6d4',
+                            accent: '#f97316',
+                            card: '#1e293b',
+                            border: '#334155'
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen flex items-center justify-center bg-slate-950">
+    
+    <!-- Login Container -->
+    <div class="glass-card rounded-2xl p-8 border border-slate-700 max-w-md w-full m-4">
+        
+        <!-- Logo/Brand -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-900 border border-slate-700 mb-4">
+                <i class="fa-solid fa-user-shield text-2xl text-orange-500"></i>
+            </div>
+            <h1 class="text-2xl font-black text-white mb-2">لوحة تحكم Zad</h1>
+            <p class="text-sm text-slate-400">Zad Automation Support System</p>
+        </div>
+        
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-6">
+            <!-- Username/Email Field -->
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2">اسم المستخدم / البريد الإلكتروني</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <i class="fa-solid fa-user text-slate-500"></i>
+                    </div>
+                    <input type="text" id="username" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 pr-10 text-sm text-white focus:border-orange-500 focus:outline-none placeholder:text-slate-600" placeholder="أدخل اسم المستخدم...">
+                </div>
+            </div>
+            
+            <!-- Password Field -->
+            <div>
+                <label class="block text-sm font-bold text-slate-300 mb-2">كلمة المرور</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <i class="fa-solid fa-lock text-slate-500"></i>
+                    </div>
+                    <input type="password" id="password" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 pr-10 text-sm text-white focus:border-orange-500 focus:outline-none placeholder:text-slate-600" placeholder="أدخل كلمة المرور...">
+                </div>
+            </div>
+            
+            <!-- Remember Me & Forgot Password -->
+            <div class="flex items-center justify-between text-xs">
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-slate-600 text-orange-500 focus:ring-orange-500">
+                    <span class="text-slate-400">تذكرني</span>
+                </label>
+                <a href="#" class="text-orange-500 hover:text-orange-400">نسيت كلمة المرور؟</a>
+            </div>
+            
+            <!-- Error Message -->
+            <div id="errorMessage" class="hidden p-3 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 text-sm">
+                اسم المستخدم أو كلمة المرور غير صحيحة
+            </div>
+            
+            <!-- Login Button -->
+            <button type="submit" class="w-full py-3.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span>تسجيل الدخول</span>
+            </button>
+        </form>
+        
+        <!-- Demo Credentials (only in development) -->
+        <div class="mt-6 p-4 rounded-lg bg-slate-900/50 border border-slate-800">
+            <p class="text-xs text-slate-400 mb-2">بيانات تسجيل الدخول للتجربة:</p>
+            <div class="text-xs text-slate-300 space-y-1">
+                <div>المستخدم: <code class="text-orange-500">admin</code></div>
+                <div>كلمة المرور: <code class="text-orange-500">admin123</code></div>
+                <div>الدور: <code class="text-orange-500">مدير</code></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Application Script -->
+    <script>
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store token in localStorage
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('userRole', data.user.role);
+                    
+                    // Redirect to admin panel
+                    window.location.href = '/admin.html';
+                } else {
+                    // Show error message
+                    errorMessage.textContent = data.error || 'فشل تسجيل الدخول';
+                    errorMessage.classList.remove('hidden');
+                    
+                    // Shake animation for error
+                    document.getElementById('loginForm').classList.add('animate-shake');
+                    setTimeout(() => {
+                        document.getElementById('loginForm').classList.remove('animate-shake');
+                    }, 500);
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorMessage.textContent = 'حدث خطأ في الخادم';
+                errorMessage.classList.remove('hidden');
+            }
+        });
+        
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+            .animate-shake {
+                animation: shake 0.5s ease-in-out;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Check if already authenticated
+        if (localStorage.getItem('authToken')) {
+            window.location.href = '/admin.html';
+        }
+    </script>
+</body>
+</html>

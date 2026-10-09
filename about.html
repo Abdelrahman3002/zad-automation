@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zad Automation | عن الشركة</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#0a192f',
+                            slate: '#1e293b',
+                            dark: '#0f172a',
+                            orange: '#f97316',
+                            gold: '#eab308',
+                            cyan: '#06b6d4',
+                            accent: '#f97316',
+                            card: '#1e293b',
+                            border: '#334155'
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background-color: #060b13;
+            color: #f8fafc;
+        }
+        .section-padding {
+            padding: 4rem 1rem;
+        }
+        .max-width-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .prose {
+            max-width: none;
+        }
+        .prose h1 {
+            @apply text-3xl font-black text-white mb-6 border-b border-slate-700/60 pb-4;
+        }
+        .prose h2 {
+            @apply text-2xl font-bold text-white mb-5;
+        }
+        .prose h3 {
+            @apply text-xl font-bold text-white mb-4;
+        }
+        .prose p {
+            @apply text-slate-400 mb-4 leading-relaxed;
+        }
+        .prose ul {
+            @apply text-slate-300 mb-4 pl-5;
+        }
+        .prose li {
+            @apply mb-2;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-950">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 text-slate-400 py-4">
+        <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
+            <a href="/zad_automation_website.html" class="flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left text-orange-500"></i>
+                <span>عودة إلى الموقع</span>
+            </a>
+            <div>
+                <h1 class="text-2xl font-black text-white">عن Zad Automation</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="section-padding">
+        <div class="max-width-container prose">
+            <h2>من نحن</h2>
+            <p>شركة Zad Automation هي مزود رائد لحلول الأتمتة والصيانة في المملكة العربية السعودية، متخصصة في تقديم خدمات الصيانة التقنية والتصنيع المتقدم للمصانع والشركات الصناعية.</p>
+
+            <h2>رؤيتنا</h2>
+            <p>أن نكون الشريك الأول للصناعة في مجال الأتمتة والصيانة، مع التركيز على الابتكار والجودة والتميز في الخدمات.</p>
+
+            <h2>مهمتنا</h2>
+            <p>توفير حلول تقنية متكاملة تضمن استمرارية تشغيل خطوط الإنتاج، وتقليل فترات التوقف، وتحسين كفاءة العمل مع الحفاظ على أعلى معايير الجودة والسلامة.</p>
+
+            <h2>خدماتنا</h2>
+            <h3>1. صيانة خطوط الإنتاج</h3>
+            <p>نقدم خدمات صيانة شاملة لخطوط الإنتاج، بما في ذلك:</p>
+            <ul>
+                <li>تشخيص وإصلاح الأعطال الميكانيكية والكهربائية.</li>
+                <li>صيانة وحدات PLC وVFC.</li>
+                <li>التحديث والترقية للأنظمة القديمة.</li>
+                <li>الوقاية من الأعطال عبر الصيانة الدورية.</li>
+            </ul>
+
+            <h3>2. تصنيع القوالب ثلاثية الأبعاد</h3>
+            <p>نمتلك مختصين في:</p>
+            <ul>
+                <li>التصميم الهندسي العكسي (Reverse Engineering).</li>
+                <li>طباعة القوالب بتقنيات SLA/SLS/FDM.</li>
+                <li>استخدام مواد صناعية عالية المقاومة للحرارة والضغط.</li>
+                <li>النماذج الأولية السريعة.</li>
+            </ul>
+
+            <h3>3. الصيانة الوقائية</h3>
+            <p>عقود صيانة دورية مخصصة لضمان:</p>
+            <ul>
+                <li>زيارات مجدولة للفحص والصيانة.</li>
+                <li>توفير قطع الغيار الأصلية.</li>
+                <li>تقارير فنية شاملة.</li>
+                <li>أولوية الاستجابة للطوارئ.</li>
+            </ul>
+
+            <h2>لماذا تختارنا؟</h2>
+            <ul>
+                <li><strong>خبرة تقنية:</strong> فريق من المهندسين المتخصصين ذوي الخبرة الواسعة.</li>
+                <li><strong>استجابة سريعة:</strong> فريق طوارئ متاح 24/7 للتعامل مع الأعطال المفاجئة.</li>
+                <li><strong>جودة مضمونة:</strong> استخدام أفضل المواد وتقنيات التصنيع.</li>
+                <li><strong>دعم شامل:</strong> متابعة من مرحلة التشخيص حتى التسليم النهائي.</li>
+                <li><strong>حلول مخصصة:</strong> تصميم خدماتنا وفقًا لاحتياجات كل عميل.</li>
+            </ul>
+
+            <h2> فريقنا</h2>
+            <p>يتكون فريق Zad Automation من:</p>
+            <ul>
+                <li>مهندسين ميكانيكيين وكهربائيين.</li>
+                <li>متخصصين في الأتمتة وبرمجة PLC.</li>
+                <li>فنيين متخصصين في الصيانة الصناعية.</li>
+                <li>مصممين ومهندسين لتقنية الطباعة ثلاثية الأبعاد.</li>
+                <li>فريق دعم فني وخدمة عملاء.</li>
+            </ul>
+
+            <h2>مناطق الخدمة</h2>
+            <p>نقدم خدماتنا في جميع أنحاء المملكة العربية السعودية، مع تركيز خاص على:</p>
+            <ul>
+                <li>المنطقة الصناعية بمدينة 6 أكتوبر.</li>
+                <li>المنطقة الصناعية بالعاشر من رمضان.</li>
+                <li>المناطق الصناعية بجدة والدمام.</li>
+                <li>المناطق الصناعية بالرياض.</li>
+            </ul>
+
+            <h2>اتصل بنا</h2>
+            <p>للحصول على استشارة مجانية أو طلب خدمة، يمكنك التواصل معنا عبر:</p>
+            <ul>
+                <li>الهاتف: +20 100 000 0000</li>
+                <li>البريد الإلكتروني: info@zad-automation.com</li>
+                <li>زيارة مقرنا: المنطقة الصناعية - مدينة 6 أكتوبر / العاشر من رمضان</li>
+            </ul>
+
+            <hr class="my-8 border-slate-700/50" />
+            <p class="text-slate-500 text-xs">آخر تحديث: 2026-10-09</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 border-t border-slate-800 pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="pt-8 border-t border-slate-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+                &copy; <span id="year">2026</span> <strong class="text-slate-300">Zad Automation</strong>. جميع الحقوق محفوظة.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('year').innerText = new Date().getFullYear();
+    </script>
+</body>
+</html>

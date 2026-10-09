@@ -3,6 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zad Automation - Industrial maintenance, PLC repair, 3D mold manufacturing, and production line automation services in Saudi Arabia. 24/7 emergency support.">
+    <meta name="keywords" content="Zad Automation, صيانة خطوط إنتاج, PLC repair, maintenance, قوالب 3D, 3D molds, industrial automation, صيانة صناعية, السعودية, Saudi Arabia, emergency maintenance, تصنيع قوالب, إلكترونيات, Inverters, VFD">
+    <meta name="author" content="Zad Automation">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="ar">
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:title" content="Zad Automation | Industrial Maintenance & 3D Mold Solutions">
+    <meta property="og:description" content="Zad Automation - Industrial maintenance, PLC repair, 3D mold manufacturing, and production line automation services in Saudi Arabia. 24/7 emergency support.">
+    <meta property="og:image" content="/images/Logo.png">
+    <meta property="og:url" content="https://zad-automation-production.up.railway.app/zad_automation_website.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ar_AR">
+    <meta property="og:locale:alternate" content="en_US">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Zad Automation | Industrial Maintenance & 3D Mold Solutions">
+    <meta name="twitter:description" content="Zad Automation - Industrial maintenance, PLC repair, 3D mold manufacturing, and production line automation services.">
+    <meta name="twitter:image" content="/images/Logo.png">
+    
+    <!-- Favicons -->
+    <link rel="icon" href="/images/Logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="/images/Logo.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://zad-automation-production.up.railway.app/zad_automation_website.html">
+    
     <title>Zad Automation | Industrial Maintenance & 3D Mold Solutions</title>
     
     <!-- Google Fonts -->
@@ -91,7 +119,9 @@
                     <a href="#services" class="hover:text-orange-400 transition-colors py-2" data-i18n="nav-services">الخدمات والهندسة</a>
                     <a href="#3d-calculator" class="hover:text-orange-400 transition-colors py-2" data-i18n="nav-3d">حاسبة القوالب 3D</a>
                     <a href="#projects" class="hover:text-orange-400 transition-colors py-2" data-i18n="nav-projects">مشاريعنا</a>
-                    <a href="#contact" class="hover:text-orange-400 transition-colors py-2" data-i18n="nav-contact">التواصل والفرع</a>
+                    <a href="/about.html" class="hover:text-orange-400 transition-colors py-2" data-i18n="nav-about">عن الشركة</a>
+                    <a href="/faq.html" class="hover:text-orange-400 transition-colors py-2" data-i18n="nav-faq">الأسئلة الشائعة</a>
+                    <a href="/contact.html" class="hover:text-orange-400 transition-colors py-2" data-i18n="nav-contact">التواصل والفرع</a>
                 </nav>
 
                 <!-- NAV ACTION -->
@@ -113,11 +143,12 @@
 
         <!-- MOBILE MENU DRAWER -->
         <div id="mobileMenu" class="hidden lg:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-6 space-y-3">
-            <a href="#about" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-about">عن Zad Automation</a>
+            <a href="/about.html" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-about">عن الشركة</a>
             <a href="#services" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-services">الخدمات والهندسة</a>
             <a href="#3d-calculator" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-3d">حاسبة القوالب 3D</a>
-            <a href="#projects" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-projects">مشاريعنا</a>
-            <a href="#contact" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-contact">التواصل والفرع</a>
+            <a href="/faq.html" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-faq">الأسئلة الشائعة</a>
+            <a href="/contact.html" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-contact">التواصل والفرع</a>
+            <a href="/terms.html" onclick="toggleMobileMenu()" class="block py-2 text-slate-200 font-medium hover:text-orange-400" data-i18n="nav-terms">شروط الخدمة</a>
             
             <div class="pt-4 border-t border-slate-800 flex flex-col gap-2">
                 <button onclick="openModal('maintenanceModal'); toggleMobileMenu();" class="w-full bg-orange-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2">
@@ -477,11 +508,13 @@
                 </div>
 
                 <div class="space-y-3">
-                    <h4 class="text-sm font-bold text-white uppercase tracking-wider" data-i18n="footer-links-title">خدمات سريعة</h4>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider" data-i18n="footer-links-title">روابط سريعة</h4>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="#services" class="hover:text-orange-400 transition-colors" data-i18n="s2-title">إنتاج قوالب ثلاثية الأبعاد 3D</a></li>
-                        <li><a href="#services" class="hover:text-orange-400 transition-colors" data-i18n="s3-title">صيانة كروت PLC & Inverters</a></li>
-                        <li><a href="#services" class="hover:text-orange-400 transition-colors" data-i18n="s4-title">عقود الصيانة الوقائية</a></li>
+                        <li><a href="/about.html" class="hover:text-orange-400 transition-colors" data-i18n="footer-about">عن الشركة</a></li>
+                        <li><a href="/faq.html" class="hover:text-orange-400 transition-colors" data-i18n="footer-faq">الأسئلة الشائعة</a></li>
+                        <li><a href="/privacy.html" class="hover:text-orange-400 transition-colors" data-i18n="footer-privacy">سياسة الخصوصية</a></li>
+                        <li><a href="/terms.html" class="hover:text-orange-400 transition-colors" data-i18n="footer-terms">شروط الخدمة</a></li>
+                        <li><a href="/contact.html" class="hover:text-orange-400 transition-colors" data-i18n="footer-contact">اتصل بنا</a></li>
                     </ul>
                 </div>
 

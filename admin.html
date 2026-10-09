@@ -63,6 +63,31 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
+    <!-- AUTHENTICATION CHECK -->
+    <script>
+        // Check if user is authenticated
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/me');
+                if (!response.ok) {
+                    // Redirect to login page if not authenticated
+                    window.location.href = '/login.html';
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Auth check error:', error);
+                window.location.href = '/login.html';
+                return false;
+            }
+        }
+
+        // Run auth check on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+    </script>
+
     <!-- TOP ANNOUNCEMENT BAR -->
     <div class="bg-slate-900 border-b border-slate-800 text-xs text-slate-300 py-2 px-4">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
@@ -81,10 +106,32 @@
                     <i class="fa-solid fa-globe text-cyan-400"></i>
                     <span id="langText">English</span>
                 </button>
+                <button onclick="logout()" class="flex items-center gap-1.5 bg-red-600/20 hover:bg-red-600/30 border border-red-600/40 text-red-400 px-2.5 py-1 rounded border border-slate-700 transition-colors text-xs font-semibold">
+                    <i class="fa-solid fa-sign-out-alt"></i>
+                    <span>تسجيل الخروج</span>
+                </button>
                 <a href="zad_automation_website.html" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded border border-slate-700 transition-colors text-xs font-semibold">
                     <i class="fa-solid fa-arrow-right"></i>
                     <span id="backToSiteText">الموقع الرئيسي</span>
                 </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- USER INFO BAR -->
+    <div class="bg-slate-900/50 border-b border-slate-800 text-xs text-slate-300 py-1 px-4">
+        <div class="max-w-7xl mx-auto flex justify-end items-center gap-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-user-circle text-cyan-400"></i>
+                <span id="usernameDisplay">--</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-user-tag text-orange-400"></i>
+                <span id="userRoleDisplay">--</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-clock text-slate-400"></i>
+                <span id="userLastLoginDisplay">--</span>
             </div>
         </div>
     </div>
@@ -352,8 +399,29 @@
         };
 
         async function fetchAPI(url, options = {}) {
-            const response = await fetch(url, options);
+            const token = localStorage.getItem('authToken');
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            const response = await fetch(url, {
+                ...options,
+                headers
+            });
+            
             if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    // Token expired or invalid, redirect to login
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userRole');
+                    window.location.href = '/login.html';
+                    return;
+                }
                 const error = await response.json();
                 throw new Error(error.error || 'API request failed');
             }
@@ -617,7 +685,29 @@
             window.location.href = 'tel:' + phone;
         }
 
+        async function updateUserInfo() {
+            try {
+                const response = await fetch('/api/auth/me');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('usernameDisplay').textContent = data.user.username;
+                    document.getElementById('userRoleDisplay').textContent = data.user.role === 'admin' ? 'مدير' : 'مشاهد';
+                    document.getElementById('userRoleDisplay').className = data.user.role === 'admin' ? 'text-orange-400' : 'text-cyan-400';
+                }
+            } catch (error) {
+                console.error('Error updating user info:', error);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userRole');
+            window.location.href = '/login.html';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            // Update user info on page load
+            updateUserInfo();
             refreshData();
             // Periodic refresh every 30 seconds
             setInterval(refreshData, 30000);
