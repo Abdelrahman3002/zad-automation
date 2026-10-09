@@ -195,32 +195,37 @@ app.post('/api/auth/login', (req, res) => {
                 return res.status(401).json({ error: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
             }
 
-            // Update last login
+            // Update last login and generate JWT token
             db.run(
                 `UPDATE users SET lastLogin = ? WHERE id = ?`,
                 [new Date().toISOString(), user.id],
-
-                // Generate JWT token
-                jwt.sign(
-                    { id: user.id, username: user.username, role: user.role },
-                    process.env.JWT_SECRET || 'zad_automation_secret_key',
-                    { expiresIn: '24h' },
-                    (err, token) => {
-                        if (err) {
-                            return res.status(500).json({ error: 'حدث خطأ في إنشاء التوكن' });
-                        }
-
-                        res.json({
-                            token,
-                            user: {
-                                id: user.id,
-                                username: user.username,
-                                role: user.role
-                            }
-                        });
+                (err) => {
+                    if (err) {
+                        console.error('Update lastLogin error:', err);
                     }
-                );
-            });
+
+                    // Generate JWT token
+                    jwt.sign(
+                        { id: user.id, username: user.username, role: user.role },
+                        process.env.JWT_SECRET || 'zad_automation_secret_key',
+                        { expiresIn: '24h' },
+                        (err, token) => {
+                            if (err) {
+                                return res.status(500).json({ error: 'حدث خطأ في إنشاء التوكن' });
+                            }
+
+                            res.json({
+                                token,
+                                user: {
+                                    id: user.id,
+                                    username: user.username,
+                                    role: user.role
+                                }
+                            });
+                        }
+                    );
+                }
+            );
         });
     });
 });
