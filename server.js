@@ -74,6 +74,21 @@ db.serialize(() => {
             }
         );
     });
+
+    // Insert default viewer user if not exists (password: viewer123 hashed)
+    bcrypt.hash('viewer123', saltRounds, (err, hashedPassword) => {
+        if (err) {
+            console.error('Error hashing viewer password:', err);
+            return;
+        }
+        db.run(
+            `INSERT OR IGNORE INTO users (username, password, role, createdAt, lastLogin) VALUES (?, ?, 'viewer', ?, NULL)`,
+            ['viewer', hashedPassword, new Date().toISOString()],
+            (err) => {
+                if (err) console.error('Error inserting viewer user:', err);
+            }
+        );
+    });
 });
 
 // JWT Authentication Middleware

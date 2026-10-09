@@ -67,16 +67,31 @@
     <script>
         // Check if user is authenticated
         async function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                // No token, redirect to login page
+                window.location.href = '/login.html';
+                return false;
+            }
+            
             try {
-                const response = await fetch('/api/auth/me');
+                const response = await fetch('/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 if (!response.ok) {
-                    // Redirect to login page if not authenticated
+                    // Token invalid or expired
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('userRole');
                     window.location.href = '/login.html';
                     return false;
                 }
                 return true;
             } catch (error) {
                 console.error('Auth check error:', error);
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userRole');
                 window.location.href = '/login.html';
                 return false;
             }
