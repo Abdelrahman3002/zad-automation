@@ -457,9 +457,6 @@ app.post('/api/auth/reset-password', (req, res) => {
     });
 });
 
-// Protected: All API routes below require authentication
-app.use(authenticateToken);
-
 // API: Submit a new request (customer side) - no auth required for customers
 app.post('/api/requests', (req, res) => {
     const { service, company, phone, type, notes, specs } = req.body;
@@ -489,6 +486,9 @@ app.post('/api/requests', (req, res) => {
         }
     );
 });
+
+// Protected: All API routes below require authentication
+app.use(authenticateToken);
 
 // API: Get customer's own requests (protected)
 app.get('/api/requests/my', authenticateToken, (req, res) => {
