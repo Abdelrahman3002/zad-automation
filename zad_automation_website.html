@@ -539,17 +539,17 @@
             <form onsubmit="handleFormSubmit(event, 'صيانة')" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="form-company">اسم الشركة / المصنع</label>
-                    <input type="text" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                    <input type="text" name="company" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
                 </div>
 
                 <div class="grid sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="form-phone">رقم الهاتف / الواتساب</label>
-                        <input type="tel" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                        <input type="tel" name="phone" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="form-type">نوع العطل</label>
-                        <select class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
+                        <select name="type" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-orange-500 focus:outline-none">
                             <option>عطل خط إنتاج كامل</option>
                             <option>تلف كروت PLC أو Inverters</option>
                         </select>
@@ -584,12 +584,12 @@
             <form onsubmit="handleFormSubmit(event, 'قوالب 3D')" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="form-company">اسم الجهة / العميل</label>
-                    <input type="text" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none">
+                    <input type="text" name="company" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1" data-i18n="form-mold-notes">ملاحظات ومواصفات القالب</label>
-                    <textarea id="moldNotesInput" rows="3" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none"></textarea>
+                    <textarea name="notes" id="moldNotesInput" rows="3" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none"></textarea>
                 </div>
 
                 <button type="submit" class="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black text-sm transition-all flex items-center justify-center gap-2">
