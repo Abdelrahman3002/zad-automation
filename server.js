@@ -514,6 +514,36 @@ app.post('/api/requests', (req, res) => {
     );
 });
 
+// SSE endpoint: real-time updates for admin dashboard (public ping, client uses token for actual data fetches)
+app.get('/api/events', (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
+
+    res.write(`data: ${JSON.stringify({ type: 'connected' })}\n\n`);
+
+    const handler = (payload) => {
+        if (res.writable) {
+            try {
+                res.write(`data: ${JSON.stringify(payload)}\n\n`);
+            } catch (e) {
+                // client disconnected
+            }
+        }
+    };
+
+    dashboardChangeEmitter.on('change', handler);
+
+    req.on('close', () => {
+        dashboardChangeEmitter.removeListener('change', handler);
+    });
+    req.on('error', () => {
+        dashboardChangeEmitter.removeListener('change', handler);
+    });
+});
+
 // Protected: All API routes below require authentication
 app.use(authenticateToken);
 
