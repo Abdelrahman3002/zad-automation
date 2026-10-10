@@ -5,8 +5,18 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "test": "jest"
   },
+  "keywords": [
+    "zad",
+    "automation",
+    "support",
+    "express",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "MIT",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
