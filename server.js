@@ -19,7 +19,12 @@ app.use(cors());
 app.use(express.json());
 
 // Rate limiter
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: 'Too many requests, please try again later.' });
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: 'Too many requests, please try again later.',
+    skip: (req) => req.path === '/api/events' // SSE connections must not be rate limited
+});
 app.use(limiter);
 
 // Dashboard real-time updates via SSE
@@ -635,8 +640,8 @@ app.get('/api/stats', authorizeRole(['admin', 'viewer']), (req, res) => {
     );
 });
 
-// SSE endpoint: real-time updates for admin dashboard
-app.get('/api/events', authenticateToken, (req, res) => {
+// SSE endpoint: real-time updates for admin dashboard (public ping, client uses token for actual data fetches)
+app.get('/api/events', (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');

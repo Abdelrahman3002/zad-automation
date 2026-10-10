@@ -736,21 +736,15 @@ if (refreshTime) {
         function setRefreshIndicator(status, timestamp) {
             const refreshTime = document.getElementById('refreshTime');
             if (!refreshTime) return;
-            const baseText = currentLang === 'ar' ? 'آخر حدث: ' : 'Last update: ';
-            const baseIcon = status === 'live'
-                ? '<i class="fa-solid fa-circle text-emerald-400 text-xs animate-pulse"></i>'
-                : status === 'error'
-                    ? '<i class="fa-solid fa-circle-exclamation text-red-400 text-xs"></i>'
-                    : '<i class="fa-solid fa-clock text-slate-400"></i>';
-
             if (status === 'live') {
-                refreshTime.innerHTML = `${baseIcon} <span class="text-emerald-400 text-xs" data-i18n="live-indicator">متصل الآن</span>`;
+                refreshTime.innerHTML = `<i class="fa-solid fa-circle text-emerald-400 text-xs animate-pulse"></i> <span class="text-emerald-400 text-xs" data-i18n="live-indicator">متصل الآن</span>`;
             } else if (status === 'error') {
-                refreshTime.innerHTML = `${baseIcon} <span class="text-red-400 text-xs" data-i18n="disconnected">غير متصل</span>`;
-            } else if (status === 'live' || status === 'refreshed') {
-                refreshTime.innerHTML = `${baseIcon} ${baseText}${timestamp.toLocaleTimeString()}`;
+                refreshTime.innerHTML = `<i class="fa-solid fa-circle-exclamation text-red-400 text-xs"></i> <span class="text-red-400 text-xs" data-i18n="disconnected">غير متصل</span>`;
+            } else if (status === 'updating') {
+                refreshTime.innerHTML = `<i class="fa-solid fa-sync fa-spin text-slate-400"></i> ${currentLang === 'ar' ? 'جارٍ التحديث تلقائيًا' : 'Auto-refreshing'}...`;
             } else {
-                refreshTime.innerHTML = `${baseIcon} ${baseText}${timestamp.toLocaleTimeString()}`;
+                const baseText = currentLang === 'ar' ? 'آخر حدث: ' : 'Last update: ';
+                refreshTime.innerHTML = `<i class="fa-solid fa-clock text-slate-400"></i> ${baseText}${timestamp.toLocaleTimeString()}`;
             }
         }
 
