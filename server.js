@@ -11,6 +11,7 @@ const { dashboardChangeEmitter } = require('./src/server/services/dashboard');
 const authRoutes = require('./src/server/routes/auth');
 const requestRoutes = require('./src/server/routes/requests');
 const statsRoutes = require('./src/server/routes/stats');
+const eventsRoutes = require('./src/server/routes/events');
 
 const app = express();
 const PORT = config.port;
@@ -22,7 +23,7 @@ const limiter = rateLimit({
   windowMs: config.rateLimit.windowMs,
   max: config.rateLimit.max,
   message: 'Too many requests, please try again later.',
-  skip: (req) => req.path === '/api/events'
+  skip: (req) => req.originalUrl === '/api/events'
 });
 app.use(limiter);
 
@@ -40,6 +41,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/auth', authRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/events', eventsRoutes);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));

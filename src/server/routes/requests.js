@@ -35,50 +35,11 @@ router.post('/', (req, res) => {
   );
 });
 
-// SSE endpoint: real-time updates for admin dashboard (public, client uses token for actual data fetches)
-router.get('/events', (req, res) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  res.setHeader('X-Accel-Buffering', 'no');
-  res.flushHeaders();
-
-  res.write(`data: ${JSON.stringify({ type: 'connected' })}\n\n`);
-
-  const dashboardChangeEmitter = req.app.get('dashboardChangeEmitter');
-
-  const handler = (payload) => {
-    if (res.writable) {
-      try {
-        res.write(`data: ${JSON.stringify(payload)}\n\n`);
-      } catch (e) {
-        // client disconnected
-      }
-    }
-  };
-
-  if (dashboardChangeEmitter) {
-    dashboardChangeEmitter.on('change', handler);
-  }
-
-  req.on('close', () => {
-    if (dashboardChangeEmitter) {
-      dashboardChangeEmitter.removeListener('change', handler);
-    }
-  });
-
-  req.on('error', () => {
-    if (dashboardChangeEmitter) {
-      dashboardChangeEmitter.removeListener('change', handler);
-    }
-  });
-});
-
 router.get('/my', authenticateToken, (req, res) => {
   const { phone } = req.user;
 
   if (!phone) {
-    return res.status(400).json({ error: 'لا يمكن جلب الطلبات بدون رقم هاتف' });
+    return res.status(400).json({ error: 'لا يمكن جلبطلب بدون رقم هاتف' });
   }
 
   db.all('SELECT * FROM requests WHERE phone = ? ORDER BY submittedAt DESC', [phone], (err, rows) => {
@@ -167,26 +128,7 @@ router.delete('/:id', authenticateToken, authorizeRole(['admin']), (req, res) =>
 
     notifyDashboardChange({ event: 'request-deleted', id: req.params.id });
     res.json({ success: true, id: req.params.id });
-  })
-});
-
-// API: Get stats
-router.get('/stats', authenticateToken, authorizeRole(['admin', 'viewer']), (req, res) => {
-  db.all(
-    `SELECT status, COUNT(*) as count FROM requests GROUP BY status`,
-    [],
-    (err, rows) => {
-      if (err) {
-        return res.status(500).json({ error: 'Failed to fetch stats' });
-      }
-      const stats = { total: 0, new: 0, confirmed: 0, progress: 0, done: 0, closed: 0 };
-      rows.forEach(r => {
-        stats[r.status] = r.count;
-        stats.total += r.count;
-      });
-      res.json(stats);
-    }
-  );
+  });
 });
 
 module.exports = router;
