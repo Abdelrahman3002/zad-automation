@@ -640,36 +640,6 @@ app.get('/api/stats', authorizeRole(['admin', 'viewer']), (req, res) => {
     );
 });
 
-// SSE endpoint: real-time updates for admin dashboard (public ping, client uses token for actual data fetches)
-app.get('/api/events', (req, res) => {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('X-Accel-Buffering', 'no');
-    res.flushHeaders();
-
-    res.write(`data: ${JSON.stringify({ type: 'connected' })}\n\n`);
-
-    const handler = (payload) => {
-        if (res.writable) {
-            try {
-                res.write(`data: ${JSON.stringify(payload)}\n\n`);
-            } catch (e) {
-                // client disconnected
-            }
-        }
-    };
-
-    dashboardChangeEmitter.on('change', handler);
-
-    req.on('close', () => {
-        dashboardChangeEmitter.removeListener('change', handler);
-    });
-    req.on('error', () => {
-        dashboardChangeEmitter.removeListener('change', handler);
-    });
-});
-
 // Serve index.html for root
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
