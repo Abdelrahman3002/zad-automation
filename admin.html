@@ -112,8 +112,8 @@
                     <span>لوحة الدعم الفنية - Zad Support</span>
                 </span>
                 <span class="flex items-center gap-1.5 bg-slate-800 px-2.5 py-1 rounded border border-slate-700">
-                    <i class="fa-solid fa-clock text-slate-400"></i>
-                    <span id="refreshTime">آخر تحديث: --:--</span>
+                    <i class="fa-solid fa-sync fa-spin text-slate-400"></i>
+                    <span id="refreshTime">تحديث تلقائي: --:--</span>
                 </span>
             </div>
             <div class="flex items-center gap-3">
@@ -162,10 +162,6 @@
                     <p class="text-sm text-slate-400" data-i18n="admin-subtitle">عرض وإدارة طلبات الصيانة وتصنيع القوالب الواردة من الموقع</p>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="refreshData()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold px-4 py-2 rounded-xl transition-colors text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-rotate-right"></i>
-                        <span data-i18n="btn-refresh">تحديث</span>
-                    </button>
                     <button onclick="clearAllData()" class="bg-red-600/20 hover:bg-red-600/30 border border-red-600/40 text-red-400 font-bold px-4 py-2 rounded-xl transition-colors text-sm flex items-center gap-2">
                         <i class="fa-solid fa-trash-can"></i>
                         <span data-i18n="btn-clear">مسح كل البيانات</span>
@@ -328,7 +324,6 @@
             ar: {
                 "admin-title": "لوحة متابعة طلبات الدعم",
                 "admin-subtitle": "عرض وإدارة طلبات الصيانة وتصنيع القوالب الواردة من الموقع",
-                "btn-refresh": "تحديث",
                 "btn-clear": "مسح كل البيانات",
                 "stat-total": "إجمالي الطلبات",
                 "stat-new": "جديدة",
@@ -371,7 +366,6 @@
             en: {
                 "admin-title": "Support Request Dashboard",
                 "admin-subtitle": "View and manage maintenance and 3D mold requests received from the site",
-                "btn-refresh": "Refresh",
                 "btn-clear": "Clear All Data",
                 "stat-total": "Total Requests",
                 "stat-new": "New",
@@ -491,8 +485,8 @@
                 renderRequests();
                 const now = new Date();
                 const refreshTime = document.getElementById('refreshTime');
-                if (refreshTime) {
-                    refreshTime.innerHTML = `<i class="fa-solid fa-clock text-slate-400"></i> ${currentLang === 'ar' ? 'آخر تحديث: ' : 'Last update: '}${now.toLocaleTimeString()}`;
+if (refreshTime) {
+                    refreshTime.innerHTML = `<i class="fa-solid fa-sync fa-spin text-slate-400"></i> ${currentLang === 'ar' ? 'تحديث تلقائي: ' : 'Auto refresh: '}${now.toLocaleTimeString()}`;
                 }
             } catch (error) {
                 console.error('Error refreshing data:', error);
@@ -714,6 +708,70 @@
             }
         }
 
+        function connectDashboardEvents() {
+            const eventSource = new EventSource('/api/events');
+            eventSource.onopen = () => {
+                setRefreshIndicator('live', new Date());
+                console.log('Dashboard live connected');
+            };
+            eventSource.onmessage = (event) => {
+                try {
+                    const msg = JSON.parse(event.data);
+                    if (msg.type === 'connected' || msg.type === 'change') {
+                        refreshData();
+                    }
+                } catch (e) {
+                    console.error('SSE message parse error', e);
+                }
+            };
+            eventSource.onerror = (error) => {
+                console.error('SSE error:', error);
+                setRefreshIndicator('error');
+                eventSource.close();
+                setTimeout(connectDashboardEvents, 5000);
+            };
+            return eventSource;
+        }
+
+        function setRefreshIndicator(status, timestamp) {
+            const refreshTime = document.getElementById('refreshTime');
+            if (!refreshTime) return;
+            const baseText = currentLang === 'ar' ? 'آخر حدث: ' : 'Last update: ';
+            const baseIcon = status === 'live'
+                ? '<i class="fa-solid fa-circle text-emerald-400 text-xs animate-pulse"></i>'
+                : status === 'error'
+                    ? '<i class="fa-solid fa-circle-exclamation text-red-400 text-xs"></i>'
+                    : '<i class="fa-solid fa-clock text-slate-400"></i>';
+
+            if (status === 'live') {
+                refreshTime.innerHTML = `${baseIcon} <span class="text-emerald-400 text-xs" data-i18n="live-indicator">متصل الآن</span>`;
+            } else if (status === 'error') {
+                refreshTime.innerHTML = `${baseIcon} <span class="text-red-400 text-xs" data-i18n="disconnected">غير متصل</span>`;
+            } else if (status === 'live' || status === 'refreshed') {
+                refreshTime.innerHTML = `${baseIcon} ${baseText}${timestamp.toLocaleTimeString()}`;
+            } else {
+                refreshTime.innerHTML = `${baseIcon} ${baseText}${timestamp.toLocaleTimeString()}`;
+            }
+        }
+
+        async function refreshData() {
+            try {
+                setRefreshIndicator('updating');
+                const [requestsData, statsData] = await Promise.all([
+                    fetchAPI('/api/requests'),
+                    fetchAPI('/api/stats')
+                ]);
+                requests = requestsData;
+                stats = statsData;
+                renderStats();
+                renderRequests();
+                setRefreshIndicator('refreshed', new Date());
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+                setRefreshIndicator('error');
+            }
+        }
+
         function logout() {
             localStorage.removeItem('authToken');
             localStorage.removeItem('userRole');
@@ -724,7 +782,9 @@
             // Update user info on page load
             updateUserInfo();
             refreshData();
-            // Periodic refresh every 30 seconds
+            // Connect to real-time SSE endpoint
+            window.dashboardEventSource = connectDashboardEvents();
+            // Periodic refresh every 30 seconds (fallback if SSE disconnects)
             setInterval(refreshData, 30000);
         });
 

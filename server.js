@@ -10,6 +10,8 @@ const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const rateLimit = require('express-rate-limit');
 
+const { EventEmitter } = require('events');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,6 +21,18 @@ app.use(express.json());
 // Rate limiter
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: 'Too many requests, please try again later.' });
 app.use(limiter);
+
+// Dashboard real-time updates via SSE
+const dashboardChangeEmitter = new EventEmitter();
+
+function notifyDashboardChange(type, extra = {}) {
+    const payload = {
+        timestamp: new Date().toISOString(),
+        ...type,
+        ...extra
+    };
+    dashboardChangeEmitter.emit('change', payload);
+}
 
 // Serve static files from the current directory
 app.use(express.static(__dirname));
@@ -482,6 +496,9 @@ app.post('/api/requests', (req, res) => {
                 return res.status(500).json({ error: 'Failed to create request' });
             }
 
+            // Notify dashboard clients of new request (real-time update)
+            notifyDashboardChange({ event: 'request-created', id });
+
             // Send email notification for new request
             sendNewRequestNotification({ id, service, company, phone, type, notes, specs, submittedAt, status: 'new' });
 
@@ -573,6 +590,10 @@ app.put('/api/requests/:id', authorizeRole(['admin']), (req, res) => {
             if (this.changes === 0) {
                 return res.status(404).json({ error: 'Request not found' });
             }
+
+            // Notify dashboard clients of request update
+            notifyDashboardChange({ event: 'request-updated', id: req.params.id, status });
+
             res.json({ success: true, id: req.params.id, status });
         }
     );
@@ -587,6 +608,10 @@ app.delete('/api/requests/:id', authorizeRole(['admin']), (req, res) => {
         if (this.changes === 0) {
             return res.status(404).json({ error: 'Request not found' });
         }
+
+        // Notify dashboard clients of request deletion
+        notifyDashboardChange({ event: 'request-deleted', id: req.params.id });
+
         res.json({ success: true, id: req.params.id });
     });
 });
@@ -608,6 +633,36 @@ app.get('/api/stats', authorizeRole(['admin', 'viewer']), (req, res) => {
             res.json(stats);
         }
     );
+});
+
+// SSE endpoint: real-time updates for admin dashboard
+app.get('/api/events', authenticateToken, (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
+
+    res.write(`data: ${JSON.stringify({ type: 'connected' })}\n\n`);
+
+    const handler = (payload) => {
+        if (res.writable) {
+            try {
+                res.write(`data: ${JSON.stringify(payload)}\n\n`);
+            } catch (e) {
+                // client disconnected
+            }
+        }
+    };
+
+    dashboardChangeEmitter.on('change', handler);
+
+    req.on('close', () => {
+        dashboardChangeEmitter.removeListener('change', handler);
+    });
+    req.on('error', () => {
+        dashboardChangeEmitter.removeListener('change', handler);
+    });
 });
 
 // Serve index.html for root
