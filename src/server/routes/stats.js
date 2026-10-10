@@ -3,7 +3,7 @@ const router = express.Router();
 const { authenticateToken, authorizeRole } = require('../middleware/auth');
 const { db } = require('../config/database');
 
-router.get('/stats', authenticateToken, authorizeRole(['admin', 'viewer']), (req, res) => {
+router.get('/', authenticateToken, authorizeRole(['admin', 'viewer']), (req, res) => {
   db.all(
     `SELECT status, COUNT(*) as count FROM requests GROUP BY status`,
     [],
