@@ -133,6 +133,11 @@ function authorizeRole(allowedRoles) {
     };
 }
 
+// Generate a unique request ID
+function generateId() {
+    return crypto.randomBytes(10).toString('hex');
+}
+
 // ===== EMAIL TRANSPORT SETUP =====
 
 let emailTransporter = null;
@@ -491,7 +496,7 @@ app.post('/api/requests', (req, res) => {
 app.use(authenticateToken);
 
 // API: Get customer's own requests (protected)
-app.get('/api/requests/my', authenticateToken, (req, res) => {
+app.get('/api/requests/my', (req, res) => {
     const { phone } = req.user;
 
     if (!phone) {
