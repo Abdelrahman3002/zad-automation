@@ -717,7 +717,8 @@ if (refreshTime) {
             eventSource.onmessage = (event) => {
                 try {
                     const msg = JSON.parse(event.data);
-                    if (msg.type === 'connected' || msg.type === 'change') {
+                    // Only refresh when a real change event is received
+                    if (msg.event) {
                         refreshData();
                     }
                 } catch (e) {
@@ -776,10 +777,8 @@ if (refreshTime) {
             // Update user info on page load
             updateUserInfo();
             refreshData();
-            // Connect to real-time SSE endpoint
+            // Connect to real-time SSE endpoint for automatic updates
             window.dashboardEventSource = connectDashboardEvents();
-            // Periodic refresh every 30 seconds (fallback if SSE disconnects)
-            setInterval(refreshData, 30000);
         });
 
         document.getElementById('detailModal').addEventListener('click', (e) => {
